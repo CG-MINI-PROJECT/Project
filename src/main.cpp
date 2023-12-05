@@ -2,12 +2,59 @@
 #include<GL/gl.h>
 #include <GL/glut.h>
 #include <math.h>
-#include<windows.h>
+
+#define PI 3.14159265
+
 
 float moveC = 0.0f;
 float moveB1 = 0.0f;
 float moveB2 = 0.0f;
 float speed = 0.02f;
+
+
+void DrawWavyLines(float startY, float endY, float frequency, float amplitude, float xOffset)
+{
+    glBegin(GL_POINTS); // Use GL_POINTS to draw individual points
+    glColor3ub(0, 0, 200);
+
+    for (float x = -12.0 + xOffset; x <= 38.0 + xOffset; x += 0.1)
+    {
+        float y = startY + amplitude * sin(2 * 3.14159 * frequency * (x - xOffset));
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+}
+
+void DrawRainbow()
+{
+    glPushMatrix();
+    float radius = 15.0f;
+    int numSegments = 100;
+    float angleIncrement = PI / numSegments;
+
+    glBegin(GL_TRIANGLE_FAN);
+
+    // Center point of the rainbow
+    glColor3ub(255, 0, 0); // Red
+    glVertex2f(1.0f, 14.0f);
+
+    for (int i = 0; i <= numSegments; i++)
+    {
+        float theta = i * angleIncrement;
+        float x = 1.0f + radius * cos(theta);
+        float y = 14.0f + radius * sin(theta);
+        // Alternate between red and orange for a simple rainbow effect
+        if (i % 2 == 0)
+            glColor3ub(255, 0, 0); // Red
+        else
+            glColor3ub(255, 127, 0); // Orange
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+    glPopMatrix();
+}
 
 
 void DrawAllComponents()
@@ -28,6 +75,8 @@ void DrawAllComponents()
     glVertex2f(-12.0,14.0);
     glVertex2f(-12.0,3.0);
     glEnd();
+    
+    DrawRainbow();
 
     /// Sun
     glPushMatrix();
@@ -166,9 +215,7 @@ void DrawAllComponents()
     glPopMatrix();
 
     glPopMatrix();
-
-
-
+    
 
     ///See portion
     glPushMatrix();
@@ -179,25 +226,26 @@ void DrawAllComponents()
     glVertex2f(38.0,-11.0); /// right-top
     glVertex2f(-12.0,-11.0); /// left-top
     glVertex2f(-12.0,-19.0);  /// left-down
+    
+    DrawWavyLines(-18.0, -18.5, 0.2, 0.7, moveC);
+    DrawWavyLines(-18.5, -19.0, 0.15, 0.25, moveC + 5.0);
+    
     glEnd();
 
 
     ///Ground portion
     glBegin(GL_POLYGON);
     glColor3ub(25,128,0);
-
+    
     glVertex2f(90.0f, -12.5f); /// angle
     glVertex2f(38.0f,-12.0f);  /// right-down
     glVertex2f(38.0f,3.0f); /// right-top
     glVertex2f(-12.0f,3.0f); /// left-top
     glVertex2f(-12.0f,-11.0f);  /// left-down
     glEnd();
-
-
-
-
+    
+    
     /// House Drawing
-
     ///1st House
     /// FEG
     glColor3ub(162, 116, 36);
@@ -206,7 +254,7 @@ void DrawAllComponents()
     glVertex2f(-6, 0);
     glVertex2f(-4, -2);
     glEnd();
-
+    
     /// FGIH
     glColor3ub(214, 42, 50);
     glBegin(GL_QUADS);
@@ -215,7 +263,7 @@ void DrawAllComponents()
     glVertex2f(-4, -2);
     glVertex2f(-3.999, -7.219);
     glEnd();
-
+    
     ///ROPQ
     glColor3ub(19, 105, 51);
     glBegin(GL_QUADS);
@@ -224,7 +272,7 @@ void DrawAllComponents()
     glVertex2f(-5.19, -3.58);
     glVertex2f(-5.19, -6.62);
     glEnd();
-
+    
     ///EGKJ
     glColor3ub(124, 85, 17);
     glBegin(GL_QUADS);
@@ -233,8 +281,7 @@ void DrawAllComponents()
     glVertex2f(6, -2);
     glVertex2f(-4, -2);
     glEnd();
-
-
+    
     ///GLMI
     glColor3ub(156, 9, 16);
     glBegin(GL_QUADS);
@@ -243,7 +290,7 @@ void DrawAllComponents()
     glVertex2f(5.26, -5.11);
     glVertex2f(-3.99, -7.22);
     glEnd();
-
+    
     ///VSTU
     glColor3ub(216, 215, 111);
     glBegin(GL_QUADS);
@@ -252,8 +299,7 @@ void DrawAllComponents()
     glVertex2f(1.95, -3.58);
     glVertex2f(1.97, -5.86);
     glEnd();
-
-
+    
     ///SZA1V
     glColor3ub(19, 105, 51);
     glBegin(GL_QUADS);
@@ -262,8 +308,7 @@ void DrawAllComponents()
     glVertex2f(0.38, -5.53);
     glVertex2f(-0.39, -6.40);
     glEnd();
-
-
+    
     ///TB1C1U
     glColor3ub(19, 105, 51);
     glBegin(GL_QUADS);
@@ -272,6 +317,7 @@ void DrawAllComponents()
     glVertex2f(1.21, -5.46);
     glVertex2f(1.97, -5.86);
     glEnd();
+
 
 
 
@@ -301,10 +347,6 @@ void DrawAllComponents()
     glVertex2f(11.59, -8.99);
     glVertex2f(11.58, -6.79);
     glEnd();
-
-
-
-
 
     ///1st Tree
 
@@ -343,6 +385,40 @@ void DrawAllComponents()
     glVertex2f(31.03, -6.05);
     glVertex2f(31.05, -10.03);
     glVertex2f(29.06, -9.97);
+    glEnd();
+
+
+    /// Stick figure Drawing
+    
+    glColor3ub(255,255,255); // Set color to white for visibility
+    
+    // Draw head
+    glBegin(GL_POLYGON);
+    for(int i=0; i<360; i++) {
+        float degInRad = i*PI/180;
+        glVertex2f(-6.0f + cos(degInRad)*0.675, -8.0f + sin(degInRad)*0.675); // Adjusted position and size
+    }
+    
+    glEnd();
+
+    // Draw body
+    glBegin(GL_LINES);
+    glVertex2f(-6.0f, -8.675f);
+    glVertex2f(-6.0f, -10.025f); // Adjusted position and size
+    glEnd();
+    
+    // Draw arms
+    glBegin(GL_LINES);
+    glVertex2f(-6.675f, -9.35f);
+    glVertex2f(-5.325f, -9.35f); // Adjusted position and size
+    glEnd();
+    
+    // Draw legs
+    glBegin(GL_LINES);
+    glVertex2f(-6.0f, -10.025f);
+    glVertex2f(-6.675f, -10.7f);
+    glVertex2f(-6.0f, -10.025f);
+    glVertex2f(-5.325f, -10.7f); // Adjusted position and size
     glEnd();
 
 
@@ -617,8 +693,6 @@ void handleMouse(int button, int state, int x, int y)
     }
     glutPostRedisplay();
 }
-
-
 
 
 
